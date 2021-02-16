@@ -67,13 +67,15 @@ HttpTemphum.prototype = {
                     Characteristic.CarbonDioxideLevel,
                     res.body.co2
                 );
-                // if (res.body.co2 > 1000) {
-                //     this.co2Service.setCharacteristic(
-                //         Characteristic.CarbonDioxide,
-                //         res.body.co2
-                //     );
-                // }
                 this.co2 = res.body.co2;
+
+                var detected = res.body.co2 > 1000 ? true : false;
+                this.co2Service.setCharacteristic(
+                    Characteristic.CarbonDioxideDetected,
+                    detected
+                );
+
+                this.co2detected = detected;
 
                 this.lastUpdateAt = +Date.now();
 
@@ -89,6 +91,9 @@ HttpTemphum.prototype = {
                         break;
                     case "co2":
                         callback(null, this.co2);
+                        break;
+                    case "co2detected":
+                        callback(null, this.co2detected);
                         break;
                     default:
                         var error = new Error("Unknown service: " + service);
@@ -112,6 +117,10 @@ HttpTemphum.prototype = {
 
     getCO2State: function(callback) {
         this.getRemoteState("co2", callback);
+    },
+
+    getCO2Detected: (callback) => {
+        this.getRemoteState("co2detected", callback);
     },
 
     getServices: function () {
@@ -149,9 +158,13 @@ HttpTemphum.prototype = {
 
         this.co2Service = new Service.CarbonDioxideSensor(this.name);
         this.co2Service
-        .getCharacteristic(Characteristic.CarbonDioxideDetected)
+        .getCharacteristic(Characteristic.CarbonDioxideLevel)
         .setProps({ minValue: 0, maxValue: 2000 })
         .on("get", this.getCO2State.bind(this));
+
+        this.co2Service
+        .getCharacteristic(Characteristic.CarbonDioxideDetected)
+        .on("get", this.getCO2Detected.bind(this));
         services.push(this.co2Service);
 
 
