@@ -136,7 +136,7 @@ HttpTemphum.prototype = {
 
         this.pm25Service = new Service.AirQualitySensor(this.name);
         this.pm25Service
-        .getCharacteristic(Characteristic.PM2_5Density)
+        .getCharacteristic(Characteristic.AirQuality)
         .setProps({ minValue: 0, maxValue: 1000 })
         .on("get", this.getPM25State.bind(this));
         services.push(this.pm25Service);
