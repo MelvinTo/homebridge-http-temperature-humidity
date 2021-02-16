@@ -119,7 +119,7 @@ HttpTemphum.prototype = {
         this.getRemoteState("co2", callback);
     },
 
-    getCO2Detected: (callback) => {
+    getCO2Detected: function(callback) {
         this.getRemoteState("co2detected", callback);
     },
 
