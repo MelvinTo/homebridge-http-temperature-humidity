@@ -63,6 +63,12 @@ HttpTemphum.prototype = {
                 );
                 this.pm25 = res.body.pm25;
 
+                this.co2Service.setCharacteristic(
+                    Characteristic.CarbonDioxideDetected,
+                    res.body.co2
+                );
+                this.co2 = res.body.co2;
+
                 this.lastUpdateAt = +Date.now();
 
                 switch (service) {
@@ -74,6 +80,9 @@ HttpTemphum.prototype = {
                         break;
                     case "pm25":
                         callback(null, this.pm25);
+                        break;
+                    case "co2":
+                        callback(null, this.co2);
                         break;
                     default:
                         var error = new Error("Unknown service: " + service);
@@ -93,6 +102,10 @@ HttpTemphum.prototype = {
 
     getPM25State: function(callback) {
         this.getRemoteState("pm25", callback);
+    },
+
+    getCO2State: function(callback) {
+        this.getRemoteState("co2", callback);
     },
 
     getServices: function () {
@@ -127,6 +140,13 @@ HttpTemphum.prototype = {
         .setProps({ minValue: 0, maxValue: 1000 })
         .on("get", this.getPM25State.bind(this));
         services.push(this.pm25Service);
+
+        this.co2Service = new Service.CarbonDioxideSensor(this.name);
+        this.co2Service
+        .getCharacteristic(Characteristic.CarbonDioxideDetected)
+        .setProps({ minValue: 0, maxValue: 2000 })
+        .on("get", this.getCO2State.bind(this));
+        services.push(this.co2Service);
 
 
         return services;
