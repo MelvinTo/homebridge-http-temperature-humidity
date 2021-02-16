@@ -57,6 +57,12 @@ HttpTemphum.prototype = {
                     this.humidity = res.body.humidity;
                 }
 
+                this.pm25Service.setCharacteristic(
+                    Characteristic.PM2_5Density,
+                    res.body.pm25
+                );
+                this.pm25 = res.body.pm25;
+
                 this.lastUpdateAt = +Date.now();
 
                 switch (service) {
@@ -65,6 +71,9 @@ HttpTemphum.prototype = {
                         break;
                     case "humidity":
                         callback(null, this.humidity);
+                        break;
+                    case "pm25":
+                        callback(null, this.pm25);
                         break;
                     default:
                         var error = new Error("Unknown service: " + service);
@@ -84,7 +93,7 @@ HttpTemphum.prototype = {
 
     getPM25State: function(callback) {
         this.getRemoteState("pm25", callback);
-    }
+    },
 
     getServices: function () {
         var services = [],
