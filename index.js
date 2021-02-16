@@ -64,9 +64,15 @@ HttpTemphum.prototype = {
                 this.pm25 = res.body.pm25;
 
                 this.co2Service.setCharacteristic(
-                    Characteristic.CarbonDioxideDetected,
+                    Characteristic.CarbonDioxideLevel,
                     res.body.co2
                 );
+                // if (res.body.co2 > 1000) {
+                //     this.co2Service.setCharacteristic(
+                //         Characteristic.CarbonDioxide,
+                //         res.body.co2
+                //     );
+                // }
                 this.co2 = res.body.co2;
 
                 this.lastUpdateAt = +Date.now();
