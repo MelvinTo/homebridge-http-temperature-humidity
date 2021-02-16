@@ -82,6 +82,10 @@ HttpTemphum.prototype = {
         this.getRemoteState("humidity", callback);
     },
 
+    getPM25State: function(callback) {
+        this.getRemoteState("pm25", callback);
+    }
+
     getServices: function () {
         var services = [],
             informationService = new Service.AccessoryInformation();
@@ -107,6 +111,14 @@ HttpTemphum.prototype = {
                 .on("get", this.getHumidityState.bind(this));
             services.push(this.humidityService);
         }
+
+        this.pm25Service = new Service.AirQualitySensor(this.name);
+        this.pm25Service
+        .getCharacteristic(Characteristic.PM2_5Density)
+        .setProps({ minValue: 0, maxValue: 1000 })
+        .on("get", this.getPM25State.bind(this));
+        services.push(this.pm25Service);
+
 
         return services;
     }
